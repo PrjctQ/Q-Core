@@ -16,7 +16,8 @@
     "clean": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install"
   },
   "files": [
-    "dist/**/*"
+    "dist/**/*",
+    "LICENSE"
   ],
   "keywords": [
     "express",
