@@ -13,14 +13,14 @@ This example creates a fully-typed, production-ready CRUD API for a `User` resou
 
 ### 1. Install Core Package
 ```bash
-npm install @q-core/core
+npm install @prjq/q-core
 ```
 
 ### 2. Define Your Data Schema (DTO)
 Create `user.dto.ts`. This defines your data shape, validation, and common field mappings.
 ```typescript
 import z from "zod";
-import { BaseDTO } from "@q-core/core";
+import { BaseDTO } from "@prjq/q-core";
 
 // Base Zod schema
 const userSchema = z.object({
@@ -48,7 +48,7 @@ export { UserDTO, userSchema };
 ### 3. Create a Data Access Object (DAO)
 Create `user.dao.ts`. This layer provides a generic, type-safe interface to your database.
 ```typescript
-import { PrismaDAO } from "@q-core/core";
+import { PrismaDAO } from "@prjq/q-core";
 import { UserDTO } from "./user.dto";
 
 // user.dao.ts
@@ -67,7 +67,7 @@ export { UserDAO };
 ### 4. Implement Business Logic (Service)
 Create `user.service.ts`. This layer encapsulates your business rules.
 ```typescript
-import { BaseService } from "@q-core/core";
+import { BaseService } from "@prjq/q-core";
 import { UserDAO } from "./user.dao";
 
 // user.service.ts
@@ -87,7 +87,7 @@ export { UserService };
 ### 5. Create an HTTP Controller
 Create `user.controller.ts`. This layer handles HTTP requests and responses.
 ```typescript
-import { BaseController } from "@q-core/core";
+import { BaseController } from "@prjq/q-core";
 import { UserService } from "./user.service";
 
 // user.controller.ts
