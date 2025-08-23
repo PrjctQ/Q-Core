@@ -3,3 +3,7 @@ dist
 build
 
 logs
+# Prisma
+/prisma/.env
+/prisma/*.db
+/prisma/*.db-journal

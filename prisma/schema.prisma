@@ -1,0 +1,21 @@
+// This is a minimal schema for library type generation only
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = "file:./dev.db"
+}
+
+// Define only the absolute minimum models you need for types
+model BaseModel {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  isDeleted Boolean  @default(false)
+
+  // This ensures the model is recognized but won't conflict with consumer schemas
+  @@map("_library_base_model")
+  @@ignore
+}

@@ -1,5 +1,6 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
 export * from "./databaseService"
+export * from "./databaseClient"
 
 import { JwtPayload } from "jsonwebtoken";
 import { ErrorCode } from "../lib/errorCode"

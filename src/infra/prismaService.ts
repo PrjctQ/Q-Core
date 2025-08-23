@@ -1,6 +1,5 @@
-import { PrismaClient, Prisma } from "@prisma/client";
+import type { PrismaClient, Prisma } from "@prisma/client";
 import { BaseDatabaseService } from "../base/baseDatabaseService";
-// import { AuthUtils } from "../utils/authUtils";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -8,22 +7,38 @@ export class PrismaService extends BaseDatabaseService {
     private static instance: PrismaService | null = null;
     private prisma: PrismaClient;
 
-    private constructor() {
+    private constructor(prisma: PrismaClient) {
         super();
-        this.prisma = new PrismaClient();
+        this.prisma = prisma;
     }
 
+    /**
+     * Initialize a global PrismaService singleton with a PrismaClient
+     */
+    public static init(prisma: PrismaClient): PrismaService {
+        if (!PrismaService.instance) {
+            PrismaService.instance = new PrismaService(prisma);
+        }
+        return PrismaService.instance;
+    }
+
+    /**
+     * Get the global PrismaService instance.
+     * Throws if not initialized.
+     */
     public static getInstance(): PrismaService {
         if (!PrismaService.instance) {
-            PrismaService.instance = new PrismaService();
+            throw new Error(
+                "PrismaService not initialized. Call PrismaService.init(new PrismaClient()) first."
+            );
         }
         return PrismaService.instance;
     }
 
     public async transaction<T = any>(
-        txf: (tx: Prisma.TransactionClient) => any
+        txf: (tx: Prisma.TransactionClient) => Promise<T>
     ): Promise<T> {
-        return await this.prisma.$transaction(txf);
+        return this.prisma.$transaction(txf);
     }
 
     public get client(): PrismaClient {
@@ -32,12 +47,12 @@ export class PrismaService extends BaseDatabaseService {
 
     protected async _connect() {
         await this.prisma.$connect();
-        // await this.__initializeSuperAdmin();
     }
 
     protected async _disconnect() {
         await this.prisma.$disconnect();
     }
+
 
     // private async __initializeSuperAdmin() {
     //     const SUPERADMIN_EMAIL = process.env.SUPERADMIN_EMAIL || "admin@todo.com"
