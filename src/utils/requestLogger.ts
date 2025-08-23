@@ -51,6 +51,15 @@ const logger = winston.createLogger({
 // Rate limit alert threshold (in ms)
 const SLOW_REQUEST_THRESHOLD = 500;
 
+/**
+ * Express middleware for comprehensive request/response logging
+ * Logs request details, response metrics, performance timing, and memory usage
+ * Includes slow request alerts and error tracking
+ * 
+ * @example
+ * // Use as global middleware:
+ * app.use(requestLogger);
+ */
 function requestLogger(req: Request, res: Response, next: NextFunction) {
     if(req.method === "OPTIONS") return next()
     const startTime = performance.now();
