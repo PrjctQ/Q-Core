@@ -1,6 +1,4 @@
-# Utils Directory Documentation
-
-## Overview
+# Utils
 
 The `utils` directory contains essential utility functions and classes that provide cross-cutting functionality throughout the application. These utilities handle common tasks such as error handling, authentication, logging, and response formatting, ensuring consistency and reducing boilerplate code across the codebase.
 
@@ -46,5 +44,3 @@ Most utilities read configuration from environment variables:
 - Rate limiting to prevent brute force attacks
 - Secure cookie options in response sender
 - Sensitive data filtering in logs
-
-This utilities directory provides the foundational building blocks for creating robust, secure, and maintainable API endpoints with consistent behavior across the entire application.

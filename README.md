@@ -9,6 +9,7 @@ An opinionated, Typescript-first meta-framework built on Express.js and Zod. The
 	1.  **Data Transfer Object (DTO)**: Defined the data schema, validation rules and field mappings using **Zod**.
 	2. **Data Access Object (DAO)**: Provides a standardized, generic interface for all CRUD operations against a database. It is abstracted to allow for different ORMs / query builders (e.g. Prisma).
 	3. **Service**: Contains the core business logic. It consumes a DAO to perform data operations and applies business rules.
+    4. Controller: Handles HTTP-specific concerns. It receives requests, calls services, and returns responses. It is devoid of business logic.
 - **Dependency Injection via Constructor**: A simple yet effective form of dependency injection is used. Each layer receives its dependency (the layer below it) explicitly via it's constructor. This makes dependencies clear, easy to mock for testing, and avoids magical global state
 - **Centralized and Structured error handling**: The framework implements a sophisticated error handling pipeline. All errors, from validation failures to database exceptions, are caught, normalized, formatted and returned to the client in a consistent JSON structure. This simplifies the debugging and provides a reliable API contract.
 - **Security First Defaults**: Includes built-in utilities for authentication (`authGuard`, `authUtils`) and rate limiting, encouraging secure practices from the start.
