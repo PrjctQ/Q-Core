@@ -17,10 +17,9 @@ export class ExpressServer {
 
   public async start(port = 3000): Promise<void> {
     try {
-      // In ExpressServer.start()
       try {
-        await this.db?.connect(); // MUST await this
-        if (!this.db) throw new Error("Database service not initialized");
+        await this.db?.connect();
+        if (!this.db) console.log("Database service not initialized");
       } catch (error) {
         console.error("Database connection fatal error:", error);
         process.exit(1); // Exit if DB fails
