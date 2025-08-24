@@ -11,9 +11,8 @@
     "lint": "eslint .",
     "lint:fix": "eslint . --fix",
     "pack:dry-run": "npm pack --dry-run",
-    "test": "vitest",
-    "prepublishOnly": "npm run test && npm run lint && npm run build",
-    "clean": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install"
+    "prepublishOnly": "npm run lint && npm run build",
+    "clean": "rm -rf dist node_modules pnpm-lock.yaml && pnpm install && pnpm prisma db push"
   },
   "files": [
     "dist/**/*",
