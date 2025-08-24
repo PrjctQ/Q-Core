@@ -7,6 +7,8 @@
 | > 1.0.0 | :white_check_mark: |
 | < 1.0.0 | :x:                |
 
+**Please always use the latest release.** Due to the early stage of development (`0.x`), we do not backport security fixes to older versions. The only way to ensure you have the latest security patches is to upgrade.
+
 ## Reporting a Vulnerability
 
 We take the security of this library seriously. If you believe you have found a security vulnerability, please report it to us privately to allow for coordination before public disclosure.
