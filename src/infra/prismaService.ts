@@ -1,5 +1,6 @@
 import type { PrismaClient, Prisma } from "@prisma/client";
 import { BaseDatabaseService } from "../base/baseDatabaseService";
+import { ServiceLocator } from "./serviceLocator";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -17,7 +18,14 @@ export class PrismaService extends BaseDatabaseService {
      */
     public static init(prisma: PrismaClient): PrismaService {
         if (!PrismaService.instance) {
+            // Initialize prisma in singleton pattern
             PrismaService.instance = new PrismaService(prisma);
+
+            // Auto register with service locator
+            // NOTE: Service locator is used to abstract dependency injection for
+            // PrismaDAO and reduce developer learning curve
+            ServiceLocator.register<PrismaService>("prismaService", PrismaService.instance)
+
         }
         return PrismaService.instance;
     }

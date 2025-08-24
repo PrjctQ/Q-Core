@@ -1,6 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
-import { BaseDTO, BaseDAO } from "../base";
-import { PrismaService } from "../infra";
+import { BaseDTO, BaseDAO } from "@/base";
+import { PrismaService, ServiceLocator } from "@/infra";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -15,8 +15,13 @@ export abstract class PrismaDAO<
         modelName: keyof PrismaClient;
         dto: TDTO;
     }) {
+        // NOTE: A service locator pattern has been used to avoid a dependency
+        // injection for prisma service. This is done to reduce developer
+        // learning curve
+        const prismaService = ServiceLocator.get<PrismaService>("prismaService")
+        console.log(ServiceLocator.getRegisteredKeys())
         super({
-            adapter: PrismaService.getInstance(),
+            adapter: prismaService,
             dto: config.dto
         });
         this.modelName = config.modelName;

@@ -1,3 +1,8 @@
+// INFO: A service locator acts as a design pattern that acts as a central
+// registry for services and components in the application. Consider it a
+// "phone book" for your application. Instead of hard-coding dependencies
+// you ask the service locator for what you need
+
 /**
  * A simple Service Locator for managing dependencies.
  * 
@@ -53,7 +58,37 @@ export class ServiceLocator {
     * Clears all registered services
     * Useful for resetting the service container in tests or app shutdown
     */
-    static clean(): void {
+    static clear(): void {
         this.services.clear()
+    }
+
+    /**
+     * Check if a service exists
+     *
+     * @param {string} key - Unique key to identify the service
+     * @returns {boolean} - Whether service exists or not
+     */
+    static has(key: string): boolean {
+        return this.services.has(key)
+    }
+
+    /**
+     * Remove a service
+     *  
+     * @param {string} key - Unique key to identify the service
+     */
+    static remove(key: string): void {
+        this.services.delete(key)
+    }
+
+    /**
+     * Get all registered keys
+     * Useful for debugging
+     *
+     * @returns {string[]} Array of reigstered keys
+     */
+    static getRegisteredKeys(): string[] {
+        const serviceKeys = Array.from(this.services.keys())
+        return [...serviceKeys]
     }
 }
