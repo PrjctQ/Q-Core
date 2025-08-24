@@ -2,6 +2,8 @@
 
 An opinionated, Typescript-first meta-framework built on Express.js and Zod. The primary goal is to enforce a clean, scalable, and strongly typed architecture for backend APIs by providing a structured layered pattern and abstracting away common boilerplates.
 
+> **Note:** The core library is database-agnostic. While it currently provides out-of-the-box support only for Prisma via `PrismaDAO` and `PrismaService`, you can easily extend it to work with any database or ORM by implementing the BaseDAO interface. Support for more ORMs is planned for future releases.
+
 ## Getting Started
 
 *   **Looking to contribute?** Please start by reading our [Contributor Guidelines](CONTRIBUTING.md) and [Code of Conduct](CODE_OF_CONDUCT.md).
@@ -13,13 +15,8 @@ This example creates a fully-typed, production-ready CRUD API for a `User` resou
 
 ### 1. Installation
 This library requires `express`, `zod` and `@prisma/client` to be installed in your project
-```
-npm install express zod @prisma/client
-```
-
-> **Note:** The core library is database-agnostic. While it currently provides out-of-the-box support only for Prisma via `PrismaDAO` and `PrismaService`, you can easily extend it to work with any database or ORM by implementing the BaseDAO interface. Support for more ORMs is planned for future releases.
-
 ```bash
+npm install express zod @prisma/client
 npm install @prjq/q-core
 ```
 
