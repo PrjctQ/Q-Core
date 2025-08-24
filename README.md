@@ -11,6 +11,8 @@ An opinionated, Typescript-first meta-framework built on Express.js and Zod. The
 
 ## Quick Start
 
+> **Prerequisite**: A working Prisma setup. This tutorial uses the provided `PrismaDAO` and `PrismaService` which requires @prisma/client and a configured database.
+
 This example creates a fully-typed, production-ready CRUD API for a `User` resource. 
 
 ### 1. Installation
@@ -28,9 +30,9 @@ import { BaseDTO } from "@prjq/q-core";
 
 // Base Zod schema
 const userSchema = z.object({
-    id: z.string(),
+    id: z.uuid(),
     name: z.string().min(2),
-    email: z.string().email(),
+    email: z.email(),
     password: z.string().min(8),
 })
 
