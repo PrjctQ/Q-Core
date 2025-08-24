@@ -163,7 +163,6 @@ export abstract class BaseController<
     public delete: RequestHandler = catchAsync(
         async (req: Request, res: Response) => {
             const id = req.params["id"] as string;
-            console.log("deleted", id);
             const result = await this.service.delete(id);
 
             ResponseSender.send({

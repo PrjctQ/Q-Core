@@ -65,6 +65,14 @@ export abstract class BaseDAO<
     }
 
     /**
+     * Checks if the entity supports soft deletion
+     * @returns {boolean} Whether entity supports soft deletion or not
+     */
+    get supportsSoftDelete(): boolean {
+        return !!this.dto.config.commonFields.isDeletedField
+    }
+
+    /**
     * Finds all records matching the optional filter.
     * @param filter - key-value pairs to filter the result by.
     * @param options - Database-specific options (e.g., `limit`, `sort`).
@@ -76,10 +84,20 @@ export abstract class BaseDAO<
         options: Record<string, unknown> = {},
         includeDeleted: boolean = false,
     ): Promise<TEntity[]> {
-        // Filter soft deleted records
-        const enhancedFilter = includeDeleted
-            ? filter
-            : { ...filter, isDeleted: false }
+        // Filter by entity fields
+        let enhancedFilter: Partial<TEntity> = {}
+
+        // Filter out soft deleted record if supported
+        if (this.supportsSoftDelete) {
+            const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+
+            // Filter soft deleted records
+            enhancedFilter = includeDeleted
+                ? filter
+                : { ...filter, [isDeletedField]: false }
+        } else {
+            enhancedFilter = filter
+        }
 
         const result = await this._findAll(enhancedFilter, options);
         return result;
@@ -97,10 +115,20 @@ export abstract class BaseDAO<
         options: Record<string, unknown> = {},
         includeDeleted: boolean = false
     ): Promise<TEntity | null> {
-        // Filter soft deleted records
-        const enhancedFilter = includeDeleted
-            ? filter
-            : { ...filter, isDeleted: false }
+        // Filter by entity fields
+        let enhancedFilter: Partial<TEntity> = {}
+
+        // Filter out soft deleted record if supported
+        if (this.supportsSoftDelete) {
+            const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+
+            // Filter soft deleted records
+            enhancedFilter = includeDeleted
+                ? filter
+                : { ...filter, [isDeletedField]: false }
+        } else {
+            enhancedFilter = filter
+        }
 
         const result = await this._findUnique(enhancedFilter, options);
         return result;
@@ -118,10 +146,20 @@ export abstract class BaseDAO<
         options: Record<string, unknown> = {},
         includeDeleted: boolean = false
     ): Promise<TEntity | null> {
-        // Filter soft deleted records
-        const enhancedFilter = includeDeleted
-            ? { id }
-            : { id, isDeleted: false }
+        // Filter by entity fields
+        let enhancedFilter = {}
+
+        // Filter out soft deleted record if supported
+        if (this.supportsSoftDelete) {
+            const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+
+            // Filter soft deleted records
+            enhancedFilter = includeDeleted
+                ? { id }
+                : { id, [isDeletedField]: false }
+        } else {
+            enhancedFilter = { id }
+        }
 
         const result = await this._findUnique(enhancedFilter as TEntity, options)
         return result;
@@ -168,7 +206,15 @@ export abstract class BaseDAO<
                 returnRecord: true
             }
     ): Promise<TEntity | null> {
-        const result = await this._softDeleteOne(id);
+        let result;
+
+        // Check if soft deletion is supported by entity
+        if (this.supportsSoftDelete) {
+            result = await this._softDeleteOne(id); // Perform soft deletion
+        } else {
+            result = await this._hardDeleteOne(id); // Or perform hard deletion
+        }
+
         if (config?.returnRecord === true) return result;
         return null;
     }

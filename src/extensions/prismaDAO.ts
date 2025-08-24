@@ -10,6 +10,7 @@ export abstract class PrismaDAO<
     TKey = string | number,
 > extends BaseDAO<TDTO, PrismaService, TEntity, TKey> {
     private modelName: keyof PrismaClient;
+    private _prismaService: any
 
     constructor(config: {
         modelName: keyof PrismaClient;
@@ -18,17 +19,24 @@ export abstract class PrismaDAO<
         // NOTE: A service locator pattern has been used to avoid a dependency
         // injection for prisma service. This is done to reduce developer
         // learning curve
-        const prismaService = ServiceLocator.get<PrismaService>("prismaService")
-        console.log(ServiceLocator.getRegisteredKeys())
+
+        // const prismaService = ServiceLocator.get<PrismaService>("prismaService")
         super({
-            adapter: prismaService,
+            adapter: null as any,
             dto: config.dto
         });
         this.modelName = config.modelName;
     }
 
+    protected get prismaService(): any {
+        if (!this._prismaService) {
+            this._prismaService = ServiceLocator.get<PrismaService>("prismaService")
+        }
+        return this._prismaService
+    }
+
     protected get model() {
-        return this.adapter.client[this.modelName as keyof PrismaClient] as any;
+        return this.prismaService.client[this.modelName as keyof PrismaClient] as any;
     }
 
     protected async _create(data: TEntity): Promise<TEntity> {
@@ -53,7 +61,6 @@ export abstract class PrismaDAO<
         filter?: Partial<TEntity> | undefined,
         options: Record<string, unknown> = {}
     ): Promise<TEntity[]> {
-
         return this.model.findMany({
             where: filter,
             ...options
@@ -71,12 +78,22 @@ export abstract class PrismaDAO<
         })
     }
     protected async _softDeleteOne(id: TKey): Promise<TEntity | null> {
+        // Throw error if entity doesnt support soft deletion
+        if (!this.supportsSoftDelete) {
+            throw new Error("Soft deletion is not supported for this entity")
+        }
+
+        // Derive the field name from dto instead of hardcoding
+        const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+
+        // Perform a soft deletion by updating the soft deletion field
         const entity = await this.model.update({
             where: { id },
             data: {
-                isDeleted: true
+                [isDeletedField]: true
             }
         })
+
         return entity
     }
 

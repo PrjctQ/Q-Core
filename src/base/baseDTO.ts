@@ -11,7 +11,7 @@ import { errorCode } from "../lib";
 
 // TODO: Current version of the library uses AnyZodObject
 // from the zod/v3 library we should upgrade this to use
-// types from zod's latest library aka zov/v4
+// types from zod's latest library aka zod/v4
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -64,7 +64,7 @@ export abstract class BaseDTO {
   // NOTE: Adds a layer of abstraction and may have a minor
   // performance cost due to validation overhead
 
-  private config: DTOConfig;
+  public config: DTOConfig;
 
   /**
    * Creates an instance of BaseDTO
