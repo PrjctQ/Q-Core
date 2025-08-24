@@ -11,7 +11,14 @@ An opinionated, Typescript-first meta-framework built on Express.js and Zod. The
 
 This example creates a fully-typed, production-ready CRUD API for a `User` resource. 
 
-### 1. Install Core Package
+### 1. Installation
+This library requires `express`, `zod` and `@prisma/client` to be installed in your project
+```
+npm install express zod @prisma/client
+```
+
+> **Note:** The core library is database-agnostic. While it currently provides out-of-the-box support only for Prisma via `PrismaDAO` and `PrismaService`, you can easily extend it to work with any database or ORM by implementing the BaseDAO interface. Support for more ORMs is planned for future releases.
+
 ```bash
 npm install @prjq/q-core
 ```
@@ -133,18 +140,23 @@ export { userRouter };
 In your main application file (e.g., `src/app.ts`):
 ```typescript
 import express from 'express';
+import PrismaClient from "@prisma/client";
+import { ExpressServer, PrismaService } from "@prjq/q-core";
 import { userRouter } from './user/user.router'; // Import your router
 
 const app = express();
 app.use(express.json());
 
+
 // Use your auto-generated, typed router
 app.use('/users', userRouter);
 
-const PORT = process.env.PORT || 3000;
-app.listen(PORT, () => {
-  console.log(`Q-Core server running on port ${PORT}`);
-});
+// Initialize application with database
+const prisma = new PrismaClient()
+const db = PrismaService.init(prisma)
+
+const server = new ExpressServer(app, db)
+server.start(3000)
 ```
 
 ### 8. Run Your API
