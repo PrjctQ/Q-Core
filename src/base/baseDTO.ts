@@ -1,4 +1,4 @@
-import z, { AnyZodObject, ZodError } from "zod/v3";
+import z, { ZodObject, ZodError, ZodRawShape } from "zod";
 import { ApiError } from "../utils";
 import { errorCode } from "../lib";
 
@@ -9,9 +9,6 @@ import { errorCode } from "../lib";
 // domain models from the data that is being sent over network or 
 // presented to the user
 
-// TODO: Current version of the library uses AnyZodObject
-// from the zod/v3 library we should upgrade this to use
-// types from zod's latest library aka zod/v4
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -153,7 +150,7 @@ export abstract class BaseDTO {
 
     // Throw error if validation fails
     if (!success) {
-      throw new ZodError(error.errors)
+      throw new ZodError(error.issues)
     }
     return validatedData;
   }
@@ -161,7 +158,7 @@ export abstract class BaseDTO {
   /**
    * Gets the create schema with auto-generated fields omitted
    */
-  protected get createSchema(): AnyZodObject {
+  protected get createSchema(): ZodObject<ZodRawShape> {
     // TODO: We should include support for dynamic auto-generated
     // field omit for easy initiation and developer convinience.
 
@@ -187,7 +184,7 @@ export abstract class BaseDTO {
   /**
    * Gets the update schema with immutable fields omitted and all fields made partial
    */
-  protected get updateSchema(): AnyZodObject {
+  protected get updateSchema(): ZodObject<ZodRawShape> {
     // TODO: Same as createSchema, we should add support
     // for dynamic auto generated field omitting
 
@@ -213,7 +210,7 @@ export abstract class BaseDTO {
  * Configuration interface for Data Transfer Object (DTO)
  */
 export interface DTOConfig {
-  baseSchema: AnyZodObject; // Base Zod schema for validation
+  baseSchema: ZodObject<ZodRawShape>; // Base Zod schema for validation
 
   // This is used to omit auto generated fields
   commonFields: {
