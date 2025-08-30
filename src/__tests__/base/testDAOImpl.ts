@@ -1,4 +1,5 @@
 import { BaseDTO, BaseDAO, BaseDatabaseService } from "@/base";
+import z from "zod";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -6,9 +7,6 @@ import { BaseDTO, BaseDAO, BaseDatabaseService } from "@/base";
 export interface TestEntity {
     id: string;
     email: string;
-    password: string;
-    createdAt?: Date;
-    updatedAt?: Date;
     isDeleted?: boolean;
 }
 
@@ -20,9 +18,39 @@ export class MockDBService extends BaseDatabaseService {
     protected async _disconnect(): Promise<void> { }
 }
 
+export class TestDTOWithSoftDeletion extends BaseDTO {
+    constructor() {
+        super({
+            baseSchema: z.object({
+                id: z.string(),
+                email: z.email(),
+                isDeleted: z.boolean()
+            }),
+            commonFields: {
+                idField: "id",
+                isDeletedField: "isDeleted"
+            }
+        })
+    }
+}
+
+export class TestDTOWithoutSoftDeletion extends BaseDTO {
+    constructor() {
+        super({
+            baseSchema: z.object({
+                id: z.string(),
+                email: z.email(),
+            }),
+            commonFields: {
+                idField: "id"
+            }
+        })
+    }
+}
+
 export class TestConcreteDAO<
     TDTO extends BaseDTO
-> extends BaseDAO<TDTO, MockDBService, TestEntity> {
+> extends BaseDAO<TDTO, TestEntity> {
     private memory: Map<string, TestEntity> = new Map();
     private transactionActive: boolean = false;
     private transactionMemory: Map<string, TestEntity> | null = null;

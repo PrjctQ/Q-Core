@@ -19,9 +19,7 @@ import { BaseDTO } from "./baseDTO";
  * 'delete' etc and integrates with `BaseDTO` for type annotation
  *
  * @template TDTO - The DTO class used for validation and transformation
- * @template TDBService - The database service/adapter type
  * @template TEntity - The entity type used in database operations
- * @template TKey - The type of the primary key (defaults to string)
  *
  * For a ready-made DAO solution for Prisma, use `PrismaDAO` instead
  *
@@ -40,15 +38,14 @@ import { BaseDTO } from "./baseDTO";
  */
 export abstract class BaseDAO<
     TDTO extends BaseDTO,
-    TDBService extends BaseDatabaseService,
-    TEntity extends { id: TKey },
-    TKey = string,
+    TEntity = ReturnType<TDTO["toCreateDTO"]>,
 > {
     /**
     * The database adapter instance responsible for
     * raw db connectivity and operations
     */
-    protected adapter: TDBService;
+    protected adapter: BaseDatabaseService | null;
+    // adapter can be null if service locator is used
 
     /**
     * The DTO instance used for validation and
@@ -63,7 +60,7 @@ export abstract class BaseDAO<
     * @param config.dto - The DTO instance for the entity this DAO manages.
     */
     constructor(config: {
-        adapter: TDBService
+        adapter: BaseDatabaseService | null
         dto: TDTO
     }) {
         this.adapter = config.adapter;
@@ -86,7 +83,7 @@ export abstract class BaseDAO<
     * @returns An array of entities.
     */
     public async findAll(
-        filter: Partial<TEntity>,
+        filter: Partial<TEntity> = {},
         options: Record<string, unknown> & PaginationProps = {},
         includeDeleted: boolean = false,
     ): Promise<TEntity[]> {
@@ -148,7 +145,7 @@ export abstract class BaseDAO<
      * @returns The found entity, or `null` if not found.
      */
     public async findById(
-        id: TKey,
+        id: string,
         options: Record<string, unknown> = {},
         includeDeleted: boolean = false
     ): Promise<TEntity | null> {
@@ -189,7 +186,7 @@ export abstract class BaseDAO<
      * @returns The updated entity.
      */
     public async update(
-        id: TKey,
+        id: string,
         entity: Partial<TEntity>,
         options?: Record<string, unknown>
     ): Promise<TEntity | null> {
@@ -205,7 +202,7 @@ export abstract class BaseDAO<
      * @returns The deleted entity if `returnRecord` is `true`, otherwise `null`.
      */
     public async delete(
-        id: TKey,
+        id: string,
         config: {
             returnRecord: boolean
         } = {
@@ -231,7 +228,7 @@ export abstract class BaseDAO<
      * @returns The entity that has been restored
      */
     public async restore(
-        id: TKey,
+        id: string,
     ): Promise<TEntity | null> {
         if (!this.supportsSoftDelete) {
             throw new Error("Restore operation is available only for entities that support soft deletion")
@@ -264,7 +261,7 @@ export abstract class BaseDAO<
      * @param config.returnRecord - If `true`, returns the deleted entity before deletion.
      * @returns The deleted entity if `returnRecord` is `true`, otherwise `null`.
      */
-    async hardDelete(id: TKey, config?: { returnRecord: boolean }): Promise<TEntity | null> {
+    async hardDelete(id: string, config?: { returnRecord: boolean }): Promise<TEntity | null> {
         const result = await this._hardDeleteOne(id);
         if (config?.returnRecord === true) return result;
         return null;
@@ -279,7 +276,7 @@ export abstract class BaseDAO<
 
     /** @abstract Finds a record by its primary key. */
     protected abstract _findById(
-        id: TKey,
+        id: string,
         options?: Record<string, unknown>
     ): Promise<TEntity | null>;
 
@@ -297,19 +294,19 @@ export abstract class BaseDAO<
 
     /** @abstract Updates one record by its primary key. */
     protected abstract _updateOne(
-        id: TKey,
+        id: string,
         data: Partial<TEntity>,
         options?: Record<string, unknown>
     ): Promise<TEntity | null>;
 
     /** @abstract Permanently deletes a record (hard delete). */
-    protected abstract _hardDeleteOne(id: TKey): Promise<TEntity | null>
+    protected abstract _hardDeleteOne(id: string): Promise<TEntity | null>
 
     /** @abstract Soft-deletes a record (sets `isDeleted` to true). */
-    protected abstract _softDeleteOne(id: TKey): Promise<TEntity | null>
+    protected abstract _softDeleteOne(id: string): Promise<TEntity | null>
 
     /** @abstract Restores a record that was soft-deleted (sets `isDeleted` to false). */
-    protected abstract _restore(id: TKey): Promise<TEntity | null>
+    protected abstract _restore(id: string): Promise<TEntity | null>
 
     /** @abstract Performs database transaction */
     protected abstract _withTransaction<T>(

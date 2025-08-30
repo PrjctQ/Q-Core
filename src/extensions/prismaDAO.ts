@@ -7,10 +7,9 @@ import { PrismaService, ServiceLocator } from "@/infra";
 export abstract class PrismaDAO<
     TDTO extends BaseDTO,
     TEntity = ReturnType<TDTO['toCreateDTO']>,
-    TKey = string | number,
-> extends BaseDAO<TDTO, PrismaService, any> {
+> extends BaseDAO<TDTO, TEntity> {
     private modelName: keyof PrismaClient;
-    private _prismaService: any
+    private _prismaService: unknown
 
     constructor(config: {
         modelName: keyof PrismaClient;
@@ -22,7 +21,7 @@ export abstract class PrismaDAO<
 
         // const prismaService = ServiceLocator.get<PrismaService>("prismaService")
         super({
-            adapter: null as any,
+            adapter: null,
             dto: config.dto
         });
         this.modelName = config.modelName;
@@ -43,7 +42,7 @@ export abstract class PrismaDAO<
         return this.model.create({ data })
     }
     protected async _findById(
-        id: TKey,
+        id: string,
         options: Record<string, unknown> = {}
     ): Promise<TEntity | null> {
         return this.model.findUnique({
@@ -67,7 +66,7 @@ export abstract class PrismaDAO<
         })
     }
     protected async _updateOne(
-        id: TKey,
+        id: string,
         data: Partial<TEntity>,
         options?: Record<string, unknown>
     ): Promise<TEntity> {
@@ -77,7 +76,7 @@ export abstract class PrismaDAO<
             ...options
         })
     }
-    protected async _softDeleteOne(id: TKey): Promise<TEntity | null> {
+    protected async _softDeleteOne(id: string): Promise<TEntity | null> {
         // Throw error if entity doesnt support soft deletion
         if (!this.supportsSoftDelete) {
             throw new Error("Soft deletion is not supported for this entity")
@@ -97,7 +96,7 @@ export abstract class PrismaDAO<
         return entity
     }
 
-    protected async _hardDeleteOne(id: TKey): Promise<TEntity | null> {
+    protected async _hardDeleteOne(id: string): Promise<TEntity | null> {
         const entity = await this.model.delete({
             where: { id },
         })

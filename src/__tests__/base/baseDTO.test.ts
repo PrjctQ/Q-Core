@@ -52,8 +52,8 @@ describe("BaseDTO", () => {
 
             const result = testUserDTO.toUpdateDTO(updateInput)
 
-            expect(result.email).toBe("new@email.com");
-            expect(result.updatedAt).toBeInstanceOf(Date);
+            expect(result["email"]).toBe("new@email.com");
+            expect(result["updatedAt"]).toBeInstanceOf(Date);
             expect(result).not.toHaveProperty("id");
             expect(result).not.toHaveProperty("createdAt");
         })

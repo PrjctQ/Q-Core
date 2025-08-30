@@ -72,7 +72,7 @@ export abstract class BaseService<
      * @returns Entity in JSON format
      * @throws {ApiError} 404 - If entity not found or is deleted
      */
-    async findById(id: string | number) {
+    async findById(id: string) {
         const entity = await this._findById(id);
         if (!entity || entity.isDeleted) {
             throw new ApiError({
@@ -102,7 +102,7 @@ export abstract class BaseService<
      * @param data - Partial data to update
      * @returns Updated entity in JSON format
      */
-    async update(id: string | number, data: unknown) {
+    async update(id: string, data: unknown) {
         const entity = await this._update(id, data);
         return this._formatOutput(entity);
     }
@@ -112,7 +112,7 @@ export abstract class BaseService<
      * @param id - Entity identifier to delete
      * @returns Result of delete operation in JSON format
      */
-    async delete(id: string | number) {
+    async delete(id: string) {
         const entity = await this._delete(id);
         return this._formatOutput(entity);
     }
@@ -145,7 +145,7 @@ export abstract class BaseService<
      * @param id - Entity identifier
      * @returns Entity or null if not found
      */
-    protected async _findById(id: string | number) {
+    protected async _findById(id: string) {
         const entity = await this.dao.findById(id);
         return entity;
     }
@@ -157,7 +157,7 @@ export abstract class BaseService<
      * @param options - Additional query options
      * @returns Array of entities
      */
-    protected async _findAll(filter = {}, options?: any) {
+    protected async _findAll(filter: Record<string, unknown>, options?: any) {
         const entity = await this.dao.findAll(filter, options);
         return entity;
     }
@@ -170,7 +170,7 @@ export abstract class BaseService<
      * @param data - Partial update data
      * @returns Updated entity
      */
-    protected async _update(id: string | number, data: unknown) {
+    protected async _update(id: string, data: unknown) {
         const dto = await this.dto.toUpdateDTO(data);
         return await this.dao.update(id, dto);
     }
@@ -181,7 +181,7 @@ export abstract class BaseService<
      * @param id - Entity identifier
      * @returns Delete operation result
      */
-    protected async _delete(id: string | number) {
+    protected async _delete(id: string) {
         const entity = await this.dao.delete(id);
         return entity;
     }
