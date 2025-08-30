@@ -7,7 +7,7 @@
 | > 1.0.0 | :white_check_mark: |
 | < 1.0.0 | :x:                |
 
-**Please always use the latest release.** Due to the early stage of development (`0.x`), we do not backport security fixes to older versions. The only way to ensure you have the latest security patches is to upgrade.
+**Please always use the latest release.** Due to the early stage of development, we do not backport security fixes to older versions. The only way to ensure you have the latest security patches is to upgrade.
 
 ## Reporting a Vulnerability
 

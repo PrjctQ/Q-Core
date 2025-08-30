@@ -1,3 +1,4 @@
+import { PaginationProps } from "@/types";
 import { BaseDatabaseService } from "./baseDatabaseService";
 import { BaseDTO } from "./baseDTO";
 
@@ -17,6 +18,11 @@ import { BaseDTO } from "./baseDTO";
  * database operations such as `findAll`, `findOne`, `insert`, `update`,
  * 'delete' etc and integrates with `BaseDTO` for type annotation
  *
+ * @template TDTO - The DTO class used for validation and transformation
+ * @template TDBService - The database service/adapter type
+ * @template TEntity - The entity type used in database operations
+ * @template TKey - The type of the primary key (defaults to string)
+ *
  * For a ready-made DAO solution for Prisma, use `PrismaDAO` instead
  *
  * @example
@@ -35,8 +41,8 @@ import { BaseDTO } from "./baseDTO";
 export abstract class BaseDAO<
     TDTO extends BaseDTO,
     TDBService extends BaseDatabaseService,
-    TEntity = ReturnType<TDTO['toCreateDTO']>,
-    TKey = string | number,
+    TEntity extends { id: TKey },
+    TKey = string,
 > {
     /**
     * The database adapter instance responsible for
@@ -81,7 +87,7 @@ export abstract class BaseDAO<
     */
     public async findAll(
         filter: Partial<TEntity>,
-        options: Record<string, unknown> = {},
+        options: Record<string, unknown> & PaginationProps = {},
         includeDeleted: boolean = false,
     ): Promise<TEntity[]> {
         // Filter by entity fields
@@ -184,7 +190,7 @@ export abstract class BaseDAO<
      */
     public async update(
         id: TKey,
-        entity: TEntity,
+        entity: Partial<TEntity>,
         options?: Record<string, unknown>
     ): Promise<TEntity | null> {
         const result = await this._updateOne(id, entity, options);
@@ -220,14 +226,45 @@ export abstract class BaseDAO<
     }
 
     /**
+     * Restores a record that has previously been soft-deleted
+     * @param id - The primary key for the record to restore
+     * @returns The entity that has been restored
+     */
+    public async restore(
+        id: TKey,
+    ): Promise<TEntity | null> {
+        if (!this.supportsSoftDelete) {
+            throw new Error("Restore operation is available only for entities that support soft deletion")
+        }
+
+        return await this._restore(id)
+    }
+
+    /**
+     * Executes an operation within a database transaction context
+     * 
+     * @template T The return type of the operation
+     * @param {function(this): Promise<T>} operation Async function to execute within the transaction. Receives a transactional DAO instance as parameter.
+     * @returns {Promise<T>} Promise that resolves with the result of the operation
+     * @example
+     * const result = await dao.withTransaction(async (transactionalDAO) => {
+     *   return await transactionalDAO.create(userData);
+     * });
+     */
+    public async withTransaction<T>(
+        operation: (transactionalDAO: this) => Promise<T>
+    ): Promise<T> {
+        return await this._withTransaction(operation)
+    }
+
+    /**
      * Permanently deletes a record from the database (hard delete).
      * @param id - The primary key of the record to delete.
      * @param config - Configuration for the delete operation.
      * @param config.returnRecord - If `true`, returns the deleted entity before deletion.
      * @returns The deleted entity if `returnRecord` is `true`, otherwise `null`.
-     * @protected This method is protected to discourage its use. Prefer soft delete.
      */
-    protected async hardDelete(id: TKey, config?: { returnRecord: boolean }): Promise<TEntity | null> {
+    async hardDelete(id: TKey, config?: { returnRecord: boolean }): Promise<TEntity | null> {
         const result = await this._hardDeleteOne(id);
         if (config?.returnRecord === true) return result;
         return null;
@@ -270,6 +307,14 @@ export abstract class BaseDAO<
 
     /** @abstract Soft-deletes a record (sets `isDeleted` to true). */
     protected abstract _softDeleteOne(id: TKey): Promise<TEntity | null>
+
+    /** @abstract Restores a record that was soft-deleted (sets `isDeleted` to false). */
+    protected abstract _restore(id: TKey): Promise<TEntity | null>
+
+    /** @abstract Performs database transaction */
+    protected abstract _withTransaction<T>(
+        operation: (transactionalDAO: this) => Promise<T>
+    ): Promise<T>
 }
 
 /**

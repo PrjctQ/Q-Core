@@ -18,8 +18,11 @@ export class AuthUtils {
      * @param password - The plain text password to hash
      * @returns Hashed password
      */
-    public static async hashPassword(password: string): Promise<string> {
-        return await bcrypt.hash(password, Number(SALT));
+    public static async hashPassword(
+        password: string,
+        salt: string | number = 0
+    ): Promise<string> {
+        return await bcrypt.hash(password, Number(SALT || salt));
     }
 
     /**
@@ -39,11 +42,11 @@ export class AuthUtils {
      * @param options - JWT options like expiresIn
      * @returns Signed JWT token
      */
-    public static issueToken(
+    public static async issueToken(
         payload: Record<string, unknown>,
         jwt_secret: string = JWT_SECRET,
         options: Record<string, unknown> = { expiresIn: "2d" }
-    ): string {
+    ): Promise<string> {
         return jwt.sign(payload, jwt_secret, options)
     }
 

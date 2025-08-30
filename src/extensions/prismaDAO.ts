@@ -8,7 +8,7 @@ export abstract class PrismaDAO<
     TDTO extends BaseDTO,
     TEntity = ReturnType<TDTO['toCreateDTO']>,
     TKey = string | number,
-> extends BaseDAO<TDTO, PrismaService, TEntity, TKey> {
+> extends BaseDAO<TDTO, PrismaService, any> {
     private modelName: keyof PrismaClient;
     private _prismaService: any
 

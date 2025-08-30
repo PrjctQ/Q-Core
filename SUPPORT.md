@@ -5,7 +5,7 @@ Thank you for using our project! This guide will help you get the right kind of 
 ## 🚨 Before You Ask
 
 1.  **Search the Documentation:** Your question might be answered in our [README.md](./README.md).
-2.  **Search Existing Issues:** Check if your question or problem has already been discussed in [GitHub Issues](https://github.com/your-username/your-repo/issues) or [GitLab Issues](https://gitlab.com/your-username/your-repo/-/issues).
+2.  **Search Existing Issues:** Check if your question or problem has already been discussed in [GitHub Issues](https://github.com/PrjctQ/Q-Core/issues) or [GitLab Issues](https://github.com/PrjctQ/Q-Core/-/issues).
 
 ## How to Get Help
 

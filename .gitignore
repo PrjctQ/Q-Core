@@ -7,3 +7,6 @@ logs
 /prisma/.env
 /prisma/*.db
 /prisma/*.db-journal
+
+# tests
+coverage/
