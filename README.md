@@ -123,7 +123,7 @@ const userController = new UserController();
 const userRouter = Router();
 
 // Map CRUD operations to routes. All validation, error handling, and typing are automatic.
-userRouter.get("/", userController.get); // GET /users
+userRouter.get("/", userController.getAll); // GET /users
 userRouter.get("/:id", userController.getById); // GET /users/:id
 userRouter.post("/", userController.post); // POST /users
 userRouter.put("/:id", userController.update); // PUT /users/:id

@@ -2,14 +2,6 @@ import z, { ZodObject, ZodError, ZodRawShape } from "zod";
 import { ApiError } from "../utils";
 import { errorCode } from "../lib";
 
-// INFO: A DTO is a data representation that acts as a bridge
-// for data transferring between different layers of application.
-// The purpose is to hold data and provide a way to transfer it.
-// It contains no business logic. This is done to decouple internal 
-// domain models from the data that is being sent over network or 
-// presented to the user
-
-
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 /**

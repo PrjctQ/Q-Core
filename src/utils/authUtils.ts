@@ -1,6 +1,5 @@
 import jwt from "jsonwebtoken";
 import bcrypt from "bcrypt";
-import { Record } from "@prisma/client/runtime/library";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 

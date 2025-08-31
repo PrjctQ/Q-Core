@@ -112,7 +112,7 @@ HTTP Response ← Controller ← Service ← DAO ← Database
 - Error handling middleware integration
 
 **Built-in Endpoints**:
-- `get()`: GET / - List resources with filtering/pagination
+- `getAll()`: GET / - List resources with filtering/pagination
 - `getById()`: GET /:id - Get single resource
 - `post()`: POST / - Create new resource
 - `update()`: PUT /:id - Update resource
@@ -159,7 +159,7 @@ class UserController extends BaseController<UserService> {
 }
 
 // 5. Set up routes
-router.get('/users', userController.get);
+router.get('/users', userController.getAll);
 router.get('/users/:id', userController.getById);
 // ... etc
 ```

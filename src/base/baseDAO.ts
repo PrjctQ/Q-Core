@@ -2,13 +2,6 @@ import { PaginationProps } from "@/types";
 import { BaseDatabaseService } from "./baseDatabaseService";
 import { BaseDTO } from "./baseDTO";
 
-// INFO: A DAO or Data Access Object defines how the application
-// service communicates with the database and provides a consistent
-// way of accessing data from the datababase across the application
-// A DAO layer ensures decoupled database operation logic from the
-// business logic. It abstracts all database-specific implementation
-// details and provides flexibility for database the application uses
-
 // NOTE: This `BaseDAO` class is an ABSTRACT template. It cannot be
 // used directly. You must implement extend it to create a concrete
 // implementation for a specific database (e.g., MongooseDAO)
@@ -195,7 +188,7 @@ export abstract class BaseDAO<
     }
 
     /**
-     * Soft-deletes a record by its primary key (sets `isDeleted` to true).
+     * Permanently Deletes a record by its primary key (sets `isDeleted` to true).
      * @param id - The primary key of the record to delete.
      * @param config - Configuration for the delete operation.
      * @param config.returnRecord - If `true`, returns the deleted entity. Defaults to `true`.
@@ -209,14 +202,7 @@ export abstract class BaseDAO<
                 returnRecord: true
             }
     ): Promise<TEntity | null> {
-        let result;
-
-        // Check if soft deletion is supported by entity
-        if (this.supportsSoftDelete) {
-            result = await this._softDeleteOne(id); // Perform soft deletion
-        } else {
-            result = await this._hardDeleteOne(id); // Or perform hard deletion
-        }
+        const result = await this._hardDeleteOne(id);
 
         if (config?.returnRecord === true) return result;
         return null;
@@ -255,14 +241,18 @@ export abstract class BaseDAO<
     }
 
     /**
-     * Permanently deletes a record from the database (hard delete).
+     * Soft-deletes a record from the database (hard delete).
      * @param id - The primary key of the record to delete.
      * @param config - Configuration for the delete operation.
      * @param config.returnRecord - If `true`, returns the deleted entity before deletion.
      * @returns The deleted entity if `returnRecord` is `true`, otherwise `null`.
      */
-    async hardDelete(id: string, config?: { returnRecord: boolean }): Promise<TEntity | null> {
-        const result = await this._hardDeleteOne(id);
+    async softDelete(id: string, config?: { returnRecord: boolean }): Promise<TEntity | null> {
+        if(!this.supportsSoftDelete) {
+            throw new Error("This entity doesn't support soft deletion")
+        }
+
+        const result = await this._softDeleteOne(id);
         if (config?.returnRecord === true) return result;
         return null;
     }

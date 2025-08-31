@@ -34,7 +34,7 @@ import { ResponseSender } from "../utils";
  * @example
  * // Router setup
  * const userRouter = Router();
- * userRouter.get('/', userController.get);
+ * userRouter.get('/', userController.getAll);
  * userRouter.get('/:id', userController.getById);
  * userRouter.post('/', userController.post);
  * userRouter.put('/:id', userController.update);
@@ -66,7 +66,7 @@ export abstract class BaseController<
      * 
      * @returns {200} Success response with array of records
      */
-    public get: RequestHandler = catchAsync(
+    public getAll: RequestHandler = catchAsync(
         async (req: Request, res: Response) => {
             const filter = req.query["filter"] ? JSON.parse(String(req.query["filter"])) : {};
 

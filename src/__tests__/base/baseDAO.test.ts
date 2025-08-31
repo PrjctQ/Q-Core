@@ -97,7 +97,7 @@ describe("BaseDAO", () => {
 
                 it("should soft delete and restore records", async () => {
                     await dao.insert(testEntity1)
-                    await dao.delete(testEntity1.id)
+                    await dao.softDelete(testEntity1.id)
                     const foundAfterDeletion = await dao.findById(testEntity1.id)
                     await dao.restore(testEntity1.id)
                     const foundAfterRestoration = await dao.findById(testEntity1.id)
@@ -113,7 +113,7 @@ describe("BaseDAO", () => {
 
                 it("should NOT restore a hard-deleted record", async () => {
                     await dao.insert(testEntity1);
-                    await dao.hardDelete(testEntity1.id);
+                    await dao.delete(testEntity1.id);
                     const result = await dao.restore(testEntity1.id);
                     expect(result).toBeNull()
                 })
@@ -128,7 +128,7 @@ describe("BaseDAO", () => {
 
             it("should perform hard deletion if hardDelete is explicitly used", async () => {
                 await dao.insert(testEntity1);
-                await dao.hardDelete(testEntity1.id);
+                await dao.delete(testEntity1.id);
                 const exists = await dao.findById(testEntity1.id)
                 expect(exists).toBeNull()
             })
