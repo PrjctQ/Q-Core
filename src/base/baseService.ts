@@ -1,6 +1,7 @@
 import { errorCode } from "../lib";
 import { ApiError } from "../utils";
 import { BaseDAO } from "./baseDAO";
+import { BaseDTO } from "./baseDTO";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -38,13 +39,14 @@ import { BaseDAO } from "./baseDAO";
  * }
  */
 export abstract class BaseService<
-    TDAO extends BaseDAO<any, any>,
+    TDAO extends BaseDAO<TDTO, any> = any,
+    TDTO extends BaseDTO = any
 > {
     /** Data Access Object instance for database operations */
     public dao: TDAO;
 
     /** Data Transfer Object instance for validation and transformation */
-    protected dto: TDAO["dto"];
+    protected dto: TDTO;
 
     /**
      * Creates a new BaseService instance
@@ -74,7 +76,8 @@ export abstract class BaseService<
      */
     async findById(id: string) {
         const entity = await this._findById(id);
-        if (!entity || entity.isDeleted) {
+        const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+        if (!entity || entity[isDeletedField]) {
             throw new ApiError({
                 statusCode: 404,
                 message: `Entity not found for ID: ${id}`,
@@ -135,7 +138,7 @@ export abstract class BaseService<
      * @returns Created entity
      */
     protected async _create(data: unknown) {
-        const dto = await this.dto.toCreateDTO(data);
+        const dto = this.dto.toCreateDTO(data);
         return await this.dao.insert(dto);
     }
 
@@ -171,7 +174,7 @@ export abstract class BaseService<
      * @returns Updated entity
      */
     protected async _update(id: string, data: unknown) {
-        const dto = await this.dto.toUpdateDTO(data);
+        const dto = this.dto.toUpdateDTO(data);
         return await this.dao.update(id, dto);
     }
 

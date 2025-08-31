@@ -5,7 +5,7 @@ import { PrismaService, ServiceLocator } from "@/infra";
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
 export abstract class PrismaDAO<
-    TDTO extends BaseDTO,
+    TDTO extends BaseDTO = any,
     TEntity = ReturnType<TDTO['toCreateDTO']>,
 > extends BaseDAO<TDTO, TEntity> {
     private modelName: keyof PrismaClient;

@@ -1,5 +1,5 @@
 import express, { type Express } from "express"
-import { userRouter } from "./modules/user";
+import { userRouter } from "./resources/user";
 
 export const app: Express = express();
 

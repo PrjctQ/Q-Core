@@ -2,7 +2,6 @@
   "include": ["src/**/*", "**/*.test.ts"],
   "exclude": ["dist", "node_modules"],
   "compilerOptions": {
-    // File Layout
     "rootDir": "./src",
     "outDir": "./dist",
 
@@ -25,7 +24,6 @@
     "noFallthroughCasesInSwitch": true,
     "noPropertyAccessFromIndexSignature": true,
 
-    // Recommended Options
     "strict": true,
     "jsx": "react-jsx",
     "isolatedModules": true,

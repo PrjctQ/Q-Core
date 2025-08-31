@@ -41,7 +41,7 @@ import { ResponseSender } from "../utils";
  * userRouter.delete('/:id', userController.delete);
  */
 export abstract class BaseController<
-    TService extends BaseService<any>
+    TService extends BaseService<any> = any
 > {
     /** Service layer instance for business logic operations */
     protected service: TService;
