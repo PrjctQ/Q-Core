@@ -95,11 +95,71 @@ export abstract class PrismaDAO<
 
         return entity
     }
-
     protected async _hardDeleteOne(id: string): Promise<TEntity | null> {
         const entity = await this.model.delete({
             where: { id },
         })
         return entity;
+    }
+    protected async _restore(id: string): Promise<TEntity | null> {
+        if (!this.supportsSoftDelete) {
+            throw new Error("Restoration is not available for this entity")
+        }
+
+        const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+
+        const entity = await this.model.update({
+            where: { id },
+            data: {
+                [isDeletedField]: false
+            }
+        })
+
+        return entity
+    }
+
+    /**
+     * Implementation of the abstract transaction method
+     * Executes an operation within a database transaction context
+     */
+    protected async _withTransaction<T>(
+        operation: (transactionalDAO: this) => Promise<T>
+    ): Promise<T> {
+        return await this.prismaService.client.$transaction(async (tx: this) => {
+            // Create a transactional instance of this DAO
+            const transactionalDAO = this.createTransactionalInstance(tx);
+            
+            // Execute the provided operation with the transactional DAO
+            return await operation(transactionalDAO);
+        });
+    }
+
+    /**
+     * Creates a transactional instance that uses the provided transaction client
+     */
+    private createTransactionalInstance(tx: any): this {
+        // Create a new instance with the same prototype
+        const transactionalDAO = Object.create(Object.getPrototypeOf(this));
+        
+        // Copy all properties from the current instance
+        Object.assign(transactionalDAO, this);
+        
+        // Override the prismaService to use transaction context
+        // We need to create a proxy that intercepts model access
+        const transactionalPrismaService = {
+            ...this.prismaService,
+            client: new Proxy(this.prismaService.client, {
+                get: (target, prop) => {
+                    if (prop === this.modelName) {
+                        return tx[this.modelName];
+                    }
+                    return target[prop as keyof typeof target];
+                }
+            })
+        };
+        
+        transactionalDAO._prismaService = transactionalPrismaService;
+        
+        return transactionalDAO;
     }
 }
