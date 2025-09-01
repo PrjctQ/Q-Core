@@ -26,7 +26,7 @@ export class TestDTOWithSoftDeletion extends BaseDTO {
                 email: z.email(),
                 isDeleted: z.boolean()
             }),
-            commonFields: {
+            autoFields: {
                 idField: "id",
                 isDeletedField: "isDeleted"
             }
@@ -41,7 +41,7 @@ export class TestDTOWithoutSoftDeletion extends BaseDTO {
                 id: z.string(),
                 email: z.email(),
             }),
-            commonFields: {
+            autoFields: {
                 idField: "id"
             }
         })

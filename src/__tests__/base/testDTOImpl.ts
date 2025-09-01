@@ -14,7 +14,7 @@ export const testUserSchema = z.object({
 // Define config for the DTO class for test DTO
 export const testUserDTOConfig: DTOConfig = {
     baseSchema: testUserSchema,
-    commonFields: {
+    autoFields: {
         idField: "id",
         createdAtField: "createdAt",
         updatedAtField: "updatedAt",

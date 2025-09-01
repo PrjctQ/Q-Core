@@ -218,19 +218,3 @@ export interface AutoFields {
   isDeletedField?: string;
 
 }
-
-export function createDTO(config: {
-  baseSchema: ZodObject<ZodRawShape>,
-  autoFields: AutoFields
-}): BaseDTO {
-  class DTO extends BaseDTO {
-    constructor() {
-      super({
-        baseSchema: config.baseSchema,
-        autoFields: config.autoFields
-      })
-    }
-  }
-
-  return new DTO()
-}
