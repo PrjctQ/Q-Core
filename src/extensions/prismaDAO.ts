@@ -1,6 +1,6 @@
 import type { PrismaClient } from "@prisma/client";
-import { BaseDTO, BaseDAO } from "@/base";
-import { PrismaService, ServiceLocator } from "@/infra";
+import { BaseDTO, BaseDAO } from "../base";
+import { PrismaService, ServiceLocator } from "../infra";
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
@@ -83,7 +83,7 @@ export abstract class PrismaDAO<
         }
 
         // Derive the field name from dto instead of hardcoding
-        const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+        const isDeletedField = this.dto.config.autoFields.isDeletedField as string
 
         // Perform a soft deletion by updating the soft deletion field
         const entity = await this.model.update({
@@ -106,7 +106,7 @@ export abstract class PrismaDAO<
             throw new Error("Restoration is not available for this entity")
         }
 
-        const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+        const isDeletedField = this.dto.config.autoFields.isDeletedField as string
 
         const entity = await this.model.update({
             where: { id },

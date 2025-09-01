@@ -3,3 +3,4 @@ export * from "./baseDAO";
 export * from "./baseService";
 export * from "./baseController";
 export * from "./baseDatabaseService";
+export * from "./Q";

@@ -1,4 +1,4 @@
-import { PaginationProps } from "@/types";
+import { PaginationProps } from "../types";
 import { BaseDatabaseService } from "./baseDatabaseService";
 import { BaseDTO } from "./baseDTO";
 
@@ -30,7 +30,7 @@ import { BaseDTO } from "./baseDTO";
  * }
  */
 export abstract class BaseDAO<
-    TDTO extends BaseDTO,
+    TDTO extends BaseDTO = BaseDTO,
     TEntity = ReturnType<TDTO["toCreateDTO"]>,
 > {
     /**
@@ -65,7 +65,7 @@ export abstract class BaseDAO<
      * @returns {boolean} Whether entity supports soft deletion or not
      */
     get supportsSoftDelete(): boolean {
-        return !!this.dto.config.commonFields.isDeletedField
+        return !!this.dto.config.autoFields.isDeletedField
     }
 
     /**
@@ -85,7 +85,7 @@ export abstract class BaseDAO<
 
         // Filter out soft deleted record if supported
         if (this.supportsSoftDelete) {
-            const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+            const isDeletedField = this.dto.config.autoFields.isDeletedField as string
 
             // Filter soft deleted records
             enhancedFilter = includeDeleted
@@ -116,7 +116,7 @@ export abstract class BaseDAO<
 
         // Filter out soft deleted record if supported
         if (this.supportsSoftDelete) {
-            const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+            const isDeletedField = this.dto.config.autoFields.isDeletedField as string
 
             // Filter soft deleted records
             enhancedFilter = includeDeleted
@@ -147,7 +147,7 @@ export abstract class BaseDAO<
 
         // Filter out soft deleted record if supported
         if (this.supportsSoftDelete) {
-            const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+            const isDeletedField = this.dto.config.autoFields.isDeletedField as string
 
             // Filter soft deleted records
             enhancedFilter = includeDeleted

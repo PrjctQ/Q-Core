@@ -69,7 +69,7 @@ export abstract class BaseDTO {
    * @returns Validated create DTO
    * @throws {@link ZodError} If validation fails
    */
-  toCreateDTO(entity: unknown) {
+  toCreateDTO<TEntity>(entity: TEntity) {
     return this.parse(this.createSchema, entity);
   }
 
@@ -81,7 +81,7 @@ export abstract class BaseDTO {
    * @throws {@link ApiError} If no fields are provided for update
    * @throws {@link ZodError} If validation fails
    */
-  toUpdateDTO(entity: unknown) {
+  toUpdateDTO<TEntity>(entity: TEntity) {
     if (Object.entries(entity as Record<string, any>).length === 0) {
       throw new ApiError({
         statusCode: 400,
@@ -95,7 +95,7 @@ export abstract class BaseDTO {
     const input = {
       ...(entity as Record<string, any>)
     }
-    const { updatedAtField } = this.config.commonFields;
+    const { updatedAtField } = this.config.autoFields;
     if (updatedAtField) {
       input[updatedAtField] = new Date();
     }
@@ -155,7 +155,7 @@ export abstract class BaseDTO {
     // field omit for easy initiation and developer convinience.
 
     const config: DTOConfig = this.config;
-    const { commonFields: {
+    const { autoFields: {
       idField,
       createdAtField,
       updatedAtField,
@@ -181,7 +181,7 @@ export abstract class BaseDTO {
     // for dynamic auto generated field omitting
 
     const config: DTOConfig = this.config;
-    const { commonFields: {
+    const { autoFields: {
       idField,
       createdAtField,
     } } = config;
@@ -205,10 +205,32 @@ export interface DTOConfig {
   baseSchema: ZodObject<ZodRawShape>; // Base Zod schema for validation
 
   // This is used to omit auto generated fields
-  commonFields: {
-    idField: string;
-    createdAtField?: string;
-    updatedAtField?: string;
-    isDeletedField?: string;
+  autoFields: AutoFields
+}
+
+/**
+ * Auto-generated fields
+ */
+export interface AutoFields {
+  idField: string;
+  createdAtField?: string;
+  updatedAtField?: string;
+  isDeletedField?: string;
+
+}
+
+export function createDTO(config: {
+  baseSchema: ZodObject<ZodRawShape>,
+  autoFields: AutoFields
+}): BaseDTO {
+  class DTO extends BaseDTO {
+    constructor() {
+      super({
+        baseSchema: config.baseSchema,
+        autoFields: config.autoFields
+      })
+    }
   }
+
+  return new DTO()
 }

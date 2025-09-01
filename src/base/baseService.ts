@@ -39,8 +39,8 @@ import { BaseDTO } from "./baseDTO";
  * }
  */
 export abstract class BaseService<
-    TDAO extends BaseDAO<TDTO, any> = any,
-    TDTO extends BaseDTO = any
+    TDAO extends BaseDAO<TDTO, any> = BaseDAO<any, any>,
+    TDTO extends BaseDTO = BaseDTO
 > {
     /** Data Access Object instance for database operations */
     public dao: TDAO;
@@ -76,7 +76,7 @@ export abstract class BaseService<
      */
     async findById(id: string) {
         const entity = await this._findById(id);
-        const isDeletedField = this.dto.config.commonFields.isDeletedField as string
+        const isDeletedField = this.dto.config.autoFields.isDeletedField as string
         if (!entity || entity[isDeletedField]) {
             throw new ApiError({
                 statusCode: 404,

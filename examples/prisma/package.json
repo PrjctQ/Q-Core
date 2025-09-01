@@ -15,7 +15,7 @@
   "packageManager": "pnpm@10.15.0",
   "dependencies": {
     "@prisma/client": "^6.15.0",
-    "@prjq/q-core": "0.0.0-alpha.3",
+    "@prjq/q-core": "0.0.0-alpha.4",
     "express": "^5.1.0",
     "zod": "^4.1.5"
   },
