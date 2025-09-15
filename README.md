@@ -71,6 +71,8 @@ const db = Q.service(prisma); // Connect the dots
 // Optional: Start with our Express setup
 const app = express();
 const server = Q.express(app, db);
+
+server.start(3000)
 ```
 
 ### 6. Run Your API

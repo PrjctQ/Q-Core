@@ -1,6 +1,6 @@
 {
   "name": "@prjq/q-core",
-  "version": "0.0.0-alpha.5",
+  "version": "0.0.0-alpha.7",
   "description": "A typescript meta framework for instant, scalable APIs. Designed to eliminate hours of boilerplate and enhance developer experience for scalable backend systems.",
   "main": "dist/index.js",
   "module": "./dist/index.js",
