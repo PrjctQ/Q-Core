@@ -2,10 +2,6 @@ import { PaginationProps } from "../types";
 import { BaseDatabaseService } from "./baseDatabaseService";
 import { BaseDTO } from "./baseDTO";
 
-// NOTE: This `BaseDAO` class is an ABSTRACT template. It cannot be
-// used directly. You must implement extend it to create a concrete
-// implementation for a specific database (e.g., MongooseDAO)
-
 /**
  * Abstract base class for Data Access Object (DAO) Provides basic
  * database operations such as `findAll`, `findOne`, `insert`, `update`,
